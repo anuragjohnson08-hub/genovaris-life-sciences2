@@ -1,0 +1,6 @@
+{
+  "name": "Genovaris Health & Wellness",
+  "description": "Evidence-informed modern medicine and botanical wellness monographs, clinical formulations, and responsible use guidance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

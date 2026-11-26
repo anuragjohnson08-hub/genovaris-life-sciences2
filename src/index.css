@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-alabaster: #F7F8F1;
+  --color-sage-mist: #EDF3EA;
+  --color-sage-soft: #EAF0E7;
+  --color-card-ivory: #FEFDF9;
+  --color-hairline: #E3E9E0;
+  --color-forest-deep: #133126;
+  --color-forest-ink: #153226;
+  --color-forest-cta: #173A2C;
+  --color-forest-cta-hover: #102B20;
+  --color-botanical-muted: #4C6156;
+  --color-botanical-kicker: #556B5F;
+
+  /* Shadcn semantic tokens harmonized with Genovaris botanical palette */
+  --color-background: #FEFDF9;
+  --color-foreground: #153226;
+  --color-primary: #173A2C;
+  --color-primary-foreground: #FEFDF9;
+  --color-secondary: #EDF3EA;
+  --color-secondary-foreground: #153226;
+  --color-muted: #EDF3EA;
+  --color-muted-foreground: #4C6156;
+  --color-accent: #EAF0E7;
+  --color-accent-foreground: #133126;
+  --color-destructive: #B42318;
+  --color-destructive-foreground: #FEFDF9;
+  --color-border: #D9E2D5;
+  --color-input: #CBD6C7;
+  --color-ring: #173A2C;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 76px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-family: var(--font-sans);
+    background-color: #F7F8F1;
+    color: #153226;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid #173A2C;
+    outline-offset: 2px;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Smooth iOS translucent navigation bar (avoid transform on sticky header to prevent compositor detachment) */
+.ios-glass-bar {
+  background-color: rgba(247, 248, 241, 0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Silky GPU-composited center-dot-to-underline hover animation across the site */
+.link-underline-center {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+  text-decoration: none;
+}
+
+.link-underline-center::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background-color: currentColor;
+  opacity: 0;
+  clip-path: inset(0px calc(50% - 2px) 0px calc(50% - 2px) round 9999px);
+  transform: scale(0.35) translateZ(0);
+  transform-origin: center;
+  will-change: clip-path, transform, opacity;
+  /* Hover-out choreography: collapse line back to center dot, then dissolve dot */
+  transition:
+    clip-path 240ms cubic-bezier(0.22, 1, 0.36, 1) 0ms,
+    transform 170ms cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+    opacity 150ms ease-out 130ms;
+  pointer-events: none;
+}
+
+.link-underline-center:hover::after,
+.link-underline-center:focus-visible::after,
+.underline-trigger:hover .link-underline-center::after,
+.underline-trigger:focus-visible .link-underline-center::after {
+  opacity: 0.82;
+  transform: scale(1) translateZ(0);
+  clip-path: inset(1px calc(0% + 0px) 1px calc(0% + 0px) round 9999px);
+  /* Hover-in choreography: pop center dot first, then stretch outward into underline */
+  transition:
+    opacity 120ms cubic-bezier(0.22, 1, 0.36, 1) 0ms,
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1) 0ms,
+    clip-path 320ms cubic-bezier(0.22, 1, 0.36, 1) 85ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .link-underline-center::after {
+    clip-path: inset(1px calc(0% + 0px) 1px calc(0% + 0px) round 9999px);
+    transform: scale(1) translateZ(0);
+    transition: opacity 150ms ease;
+  }
+}

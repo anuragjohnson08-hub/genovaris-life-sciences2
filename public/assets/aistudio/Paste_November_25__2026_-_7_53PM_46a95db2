@@ -1,0 +1,552 @@
+<!-- Cookie Bite, by DesignBookmark (https://designbookmark.com/motion#db-cookie-bite). One file: open it in a browser. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cookie Bite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Motion Studies design tokens.
+   Single source of truth for color, type, radius and motion.
+   Edit here (or in Claude Design) and every component follows. */
+:root{
+  /* ---------- color ---------- */
+  --stage:#000;                         /* page background */
+  --card:#171717;                       /* component stage card (= white 9% on black) */
+  --surface:#262626;                    /* component body */
+  --fill-1:rgba(255,255,255,.05);       /* tiles, fields */
+  --fill-2:rgba(255,255,255,.09);       /* chips, badges */
+  --fill-3:rgba(255,255,255,.14);       /* tracks, avatars, bars */
+  --line:rgba(255,255,255,.12);
+  --text:#fff;
+  --text-2:rgba(255,255,255,.78);
+  --muted:#9a9a9a;
+  --muted-2:#828282;
+  --chip-text:#b4b4b4;
+  --white:#fff;
+  --black:#000;
+  --green:#34d17a;
+  --green-text:#3ce085;
+  --orange:#ff9f0a;
+  --orange-text:#ff9f0a;                /* orange used as text: darker in light */
+  --red:#ff5a5f;
+  --yellow:#ffd23f;
+  --blue:#3ec9ff;
+  --purple:#c69bff;
+  --pink:#ff6ad5;
+  --heart:#ff4d6d;                      /* like, favourite */
+  --green-soft:rgba(52,209,122,.14);    /* tinted chip behind green text */
+  --on-green:#04140a;                   /* text and checks on --green, same in both themes */
+  --object:#2c2c2c;                     /* a free-standing grey object with no card under it: island, goo bubbles */
+  --inverse:#fff;                       /* primary pills, thumbs, drops */
+  --on-inverse:#000;                    /* content on top of --inverse */
+  --rim:transparent;          /* no strokes anywhere (Noah, 9 Nov 2026) */ /* 1px inner edge on surfaces */
+  --focus-rim:transparent;
+  --glow:rgba(255,255,255,.16);         /* cursor light on tiles */
+  --sh:0;                               /* drop shadow strength multiplier; 0 = no shadows anywhere (Noah, 9 Nov 2026) */
+  color-scheme:dark;
+
+  /* ---------- type ---------- */
+  --font:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --fs-2xs:11px;
+  --fs-xs:12px;
+  --fs-sm:13px;
+  --fs-md:14px;
+  --fs-base:15px;
+  --fs-lg:16px;
+  --fs-xl:17px;
+  --fw-regular:400;
+  --fw-medium:500;
+  --fw-bold:600;
+
+  /* ---------- radius ---------- */
+  --r-card:28px;
+  --r-tile:14px;
+  --r-bar:5px;
+  --r-pill:999px;
+  /* inner radius = outer radius - the padding between them. Usual steps: */
+  --r-xs:6px;                           /* keys, tiny chips */
+  --r-row:12px;                         /* rows, icon buttons, highlights inside a panel */
+  --r-panel:18px;                       /* bars, menus, small panels */
+  --r-sheet:24px;                       /* large panels */
+
+  /* ---------- motion: springs are "stiffness damping" ---------- */
+  /* Shared presets. A new component starts from these and only adds its own token when it truly needs a different feel. */
+  --spring-follow:900 50;      /* something held by the pointer: no overshoot, no lag */
+  --spring-settle:280 22;      /* letting go, landing on a value: one small overshoot */
+  --spring-soft:260 24;        /* large moves: panels, sheets, the whole component shifting */
+  --spring-lead:620 36;        /* stretchy highlight: the edge facing the move */
+  --spring-trail:190 19;       /* stretchy highlight: the edge that lags, this makes the stretch */
+  --spring-pop:520 16;         /* icon or number pop on select */
+  --spring-fade:420 32;        /* opacity and small slides */
+  --stagger:45;                /* ms between items entering one after another */
+  /* Rubber Dock */
+  --dock-lead:640 38;          /* edge of the pill that leads the move */
+  --dock-trail:150 16;         /* edge that lags behind: lower = more stretch */
+  --dock-drag-lead:1100 56;
+  --dock-drag-trail:320 26;
+  --dock-open-w:340 21;        /* dock -> card, width */
+  --dock-open-h:230 21;        /* dock -> card, height */
+  --dock-close:420 30;
+  --dock-pop:520 16;           /* icon pop on select */
+  --dock-expanded-w:340;       /* px */
+
+  /* Goo Menu */
+  --goo-out:230 15;            /* bubbles flying out */
+  --goo-in:520 34;             /* bubbles returning */
+  --goo-release:300 12;        /* snap back after a drag */
+  --goo-toast:260 17;          /* + morphing into the toast pill */
+  --goo-radius:112;            /* px, distance of bubbles from + */
+  --goo-stagger:45;            /* ms between bubbles */
+  --goo-toast-ms:2600;         /* how long the toast stays */
+  --goo-blur:10;               /* goo strength: higher = bubbles fuse from further away */
+
+  /* Morph Island */
+  --island-w:380 24;           /* width morph */
+  --island-h:300 22;           /* height morph, a bit softer so it lands after the width */
+  --island-radius:32;          /* px, max corner radius when tall */
+  --island-cycle-ms:2800;      /* autoplay step until the viewer interacts */
+
+  /* Hold Button */
+  --hold-ms:1200;              /* how long to hold */
+  --hold-release:260 14;       /* fill springing back when let go early */
+  --hold-morph:320 20;         /* pill <-> circle */
+  --hold-done-ms:1700;         /* how long the done state stays */
+
+  /* Jelly Slider */
+  --slider-follow:900 50;      /* thumb following the pointer */
+  --slider-bubble:420 22;      /* value bubble rising out of the thumb */
+  --slider-release:300 14;     /* snap back after over-drag */
+  --slider-blur:8;             /* goo strength between thumb and bubble */
+
+  /* Swipe Deck */
+  --deck-drag:900 50;          /* top card following the pointer */
+  --deck-return:280 16;        /* snapping back when not thrown far enough */
+  --deck-threshold:110;        /* px of drag that counts as a decision */
+
+  /* Springy Input */
+  --input-caret:700 32;        /* caret travel; it stretches with speed */
+  --input-morph:300 20;        /* field <-> success pill */
+
+  /* Pull to Refresh */
+  --pull-threshold:88;         /* px of pull that triggers a refresh */
+  --pull-return:260 18;        /* list springing back */
+  --pull-hold-ms:1300;         /* how long the spinner runs */
+
+  /* Magnetic Tiles */
+  --tile-pull:12;              /* px a tile moves toward the cursor */
+  --tile-tilt:12;              /* deg of 3D tilt */
+  --tile-open:300 24;          /* tile -> card morph */
+
+  /* Glass Lens */
+  --lens-follow:180 17;        /* lens chasing the cursor, a little lazy like a drop of water */
+  --lens-zoom:1.7;             /* magnification at rest */
+  --lens-zoom-press:2.4;       /* magnification while pressed */
+  --lens-size:150;             /* px */
+
+  /* Morph Select */
+  --select-open:360 24;        /* trigger <-> menu */
+  --select-hl:620 34;          /* highlight pill edges (leading edge) */
+  --select-reorder:260 21;     /* rows sliding to their new place */
+
+  /* Parallax Ticket */
+  --ticket-tilt:14;            /* deg */
+  --ticket-depth:12;           /* px of parallax for the front layer */
+  --ticket-flip:170 15;        /* flip spring, a little overshoot */
+
+  /* Wheel Picker */
+  --wheel-snap:240 24;         /* settling on the nearest value */
+  --wheel-decay:5;             /* momentum decay per second: lower = spins longer */
+
+  /* Trends */
+  --trend-menu:330 25;         /* "..." button growing into the menu */
+  --trend-fly:260 20;          /* the three dots flying into the menu icons */
+  --trend-row:300 28;          /* row height: dismiss, undo, show more */
+  --trend-live-ms:2200;        /* how often a post count rolls */
+  --trend-tick-ms:1100;        /* how often the charts get a new point */
+  --trend-expand:280 24;       /* row opening into the big chart */
+  --trend-rank:260 22;         /* rows swapping places when the ranking changes */
+
+  /* Side Nav */
+  --nav-lead:560 34;           /* hover pill: edge moving toward the new item */
+  --nav-trail:220 21;          /* hover pill: edge catching up, this makes it stretch */
+
+  /* Rolling Counter */
+  --count-roll:320 24;         /* each digit column rolling to its value: lower damping = more bounce */
+  --count-width:380 22;        /* columns growing in and folding away, this stretches the pill */
+  --count-press:600 18;        /* button squash, number pop and lean */
+  --count-stagger:45;          /* ms each higher column waits, so a carry ripples left */
+  --count-blur:1;              /* motion blur strength, 0 = off */
+  --count-decay:3.5;           /* fling decay per second: lower = coasts longer */
+  --count-snap:260 24;         /* ruler settling on the nearest tick */
+  --count-gap:14;              /* ruler: px between ticks */
+  --count-fisheye:60;          /* ruler: how much ticks swell near the marker, 0..100 */
+  --count-flip:140;            /* split flap: ms per fold */
+}
+
+/* ---------- light mode ---------- */
+:root[data-theme="light"]{
+  --stage:#fff;
+  --card:#f7f7f6;
+  --surface:#fff;
+  --fill-1:rgba(23,24,26,.04);
+  --fill-2:rgba(23,24,26,.07);
+  --fill-3:rgba(23,24,26,.12);
+  --line:rgba(23,24,26,.16);
+  --text:#17181a;
+  --text-2:#3c3b37;
+  --muted:#6f6e68;
+  --muted-2:#85847e;
+  --chip-text:#5c5b56;
+  --green-text:#15803d;
+  --orange-text:#c2660a;
+  --object:#e6e5e2;
+  --inverse:#0e0f11;
+  --on-inverse:#f4f3f1;
+  --rim:transparent;
+  --focus-rim:transparent;
+  --glow:rgba(23,24,26,.06);
+  --sh:0;
+  color-scheme:light;
+}
+
+/* ---------- both themes at once ----------
+   For a component that shows the dark and the light look side by side (Pull cord:
+   the light floods out of the bulb). Same values as the two blocks above, colour only. */
+.theme-dark{
+  --card:#171717;--surface:#262626;--object:#2c2c2c;
+  --fill-1:rgba(255,255,255,.05);--fill-2:rgba(255,255,255,.09);--fill-3:rgba(255,255,255,.14);
+  --text:#fff;--text-2:rgba(255,255,255,.78);--muted:#9a9a9a;--muted-2:#828282;
+  --inverse:#fff;--on-inverse:#000;color-scheme:dark;
+}
+.theme-light{
+  --card:#f7f7f6;--surface:#fff;--object:#e6e5e2;
+  --fill-1:rgba(23,24,26,.04);--fill-2:rgba(23,24,26,.07);--fill-3:rgba(23,24,26,.12);
+  --text:#17181a;--text-2:#3c3b37;--muted:#6f6e68;--muted-2:#85847e;
+  --inverse:#0e0f11;--on-inverse:#f4f3f1;color-scheme:light;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--card);color:var(--text);overflow:hidden;
+  font-family:var(--font);-webkit-font-smoothing:antialiased;
+  user-select:none;-webkit-user-select:none;
+}
+.badge{
+  position:absolute;left:14px;top:14px;z-index:3;
+  font-size:var(--fs-xs);font-weight:var(--fw-medium);color:var(--text);
+  background:var(--fill-2);border-radius:var(--r-pill);padding:4px 10px;
+}
+
+/* Avatars and card art: grainy mesh, mixed (Noah, 12 Nov 2026).
+   Three soft spots of colour melt over a main colour, under a fine grain.
+   Each family is turned a different way (--p1..3), so the light spot and the deep spot
+   never sit in the same corner twice and a row of them does not read as one recipe. */
+[data-av]{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),radial-gradient(70% 70% at var(--p1),var(--av-l) 0,transparent 70%),radial-gradient(60% 60% at var(--p2),var(--av-p) 0,transparent 70%),radial-gradient(75% 75% at var(--p3),var(--av-b) 0,transparent 72%),var(--av-a)!important;background-blend-mode:overlay,normal,normal,normal,normal!important}
+[data-av="1"]{--av-l:#ff8fd0;--av-a:#ff3fa6;--av-b:#6a35ff;--av-p:#ffd3ec;--p1:12.0% 10.0%;--p2:92.0% 8.0%;--p3:88.0% 96.0%}
+[data-av="2"]{--av-l:#7fe3ff;--av-a:#2b8cff;--av-b:#5a35ff;--av-p:#cdf3ff;--p1:102.9% 65.6%;--p2:34.6% 107.4%;--p3:-5.9% 29.2%}
+[data-av="3"]{--av-l:#d6ff5a;--av-a:#22d39a;--av-b:#0a8a8f;--av-p:#efffb0;--p1:65.6% -2.9%;--p2:107.4% 65.4%;--p3:29.2% 105.9%}
+[data-av="4"]{--av-l:#ffb866;--av-a:#ff4a5e;--av-b:#c31f86;--av-p:#ffe0b8;--p1:34.4% 102.9%;--p2:-7.4% 34.6%;--p3:70.8% -5.9%}
+[data-av="5"]{--av-l:#fff27a;--av-a:#ffa51f;--av-b:#ff4a2e;--av-p:#fff3bf;--p1:-3.6% 62.9%;--p2:34.6% -7.4%;--p3:108.8% 40.1%}
+[data-av="6"]{--av-l:#7dffea;--av-a:#1fa8ff;--av-b:#3a3cff;--av-p:#c9fff5;--p1:90.0% 12.0%;--p2:92.0% 92.0%;--p3:4.0% 88.0%}
+[data-av="7"]{--av-l:#ffd3f1;--av-a:#c07bff;--av-b:#ff4f9a;--av-p:#f0dcff;--p1:62.9% 103.6%;--p2:-7.4% 65.4%;--p3:40.1% -8.8%}
+[data-av="8"]{--av-l:#c2ffd6;--av-a:#2fe08a;--av-b:#0a9a6a;--av-p:#e2ffec;--p1:37.1% -3.6%;--p2:107.4% 34.6%;--p3:59.9% 108.8%}
+[data-av="9"]{--av-l:#ffe3b5;--av-a:#ff8a6a;--av-b:#ff3f86;--av-p:#ffe6d8;--p1:10.0% 88.0%;--p2:8.0% 8.0%;--p3:96.0% 12.0%}
+[data-av="10"]{--av-l:#bfa0ff;--av-a:#5a3cff;--av-b:#1a1ab0;--av-p:#e0d2ff;--p1:103.6% 37.1%;--p2:65.4% 107.4%;--p3:-8.8% 59.9%}
+[data-av="11"]{--av-l:#f6ff86;--av-a:#8ae83a;--av-b:#1fb86a;--av-p:#fbffc8;--p1:-2.9% 34.4%;--p2:65.4% -7.4%;--p3:105.9% 70.8%}
+[data-av="12"]{--av-l:#ffa3cd;--av-a:#e03cff;--av-b:#6a2cff;--av-p:#ffd2ea;--p1:88.0% 90.0%;--p2:8.0% 92.0%;--p3:12.0% 4.0%}
+
+/* Cookie Bite: a cookie banner with a real cookie on it. Accept and it is
+   eaten in three bites, crumbs and all; No thanks and it is flicked off the
+   card. Either way the banner folds into a small note and gets out of the way.
+   Read DESIGN.md first. Tokens only: no colours, small font sizes, strokes or shadows by hand. */
+.banner{
+  position:absolute;left:50%;top:50%;border-radius:var(--r-sheet);background:var(--surface);
+  will-change:transform,width,height;
+  --dough:color-mix(in srgb,var(--orange) 60%,var(--yellow));
+  --chip:color-mix(in srgb,var(--orange) 36%,var(--black));
+}
+.body{position:absolute;left:0;top:0;padding:20px;will-change:opacity}
+.top{display:flex;gap:14px;align-items:center}
+.plate{position:relative;flex:none;width:64px;height:64px}
+.cookie{position:absolute;inset:0;width:64px;height:64px;overflow:visible;will-change:transform}
+/* the cookie is lit from the top left, like the avatar orbs: same dough colour, a lighter face and a baked edge */
+.d0{stop-color:color-mix(in srgb,var(--dough) 62%,var(--white))}
+.d1{stop-color:var(--dough)}
+.d2{stop-color:color-mix(in srgb,var(--dough) 80%,var(--chip))}
+.c0{stop-color:color-mix(in srgb,var(--chip) 72%,var(--dough))}
+.c1{stop-color:color-mix(in srgb,var(--chip) 78%,var(--black))}
+.n0{stop-color:color-mix(in srgb,var(--dough) 74%,var(--chip))}
+.n1{stop-color:color-mix(in srgb,var(--dough) 74%,var(--chip));stop-opacity:0}
+.edge{fill:color-mix(in srgb,var(--dough) 58%,var(--chip))}
+.dough{fill:url(#cookie-dough)}
+.dent{fill:url(#cookie-dent)}
+.chips circle{fill:url(#cookie-chip)}
+.keep{fill:var(--white)}                                 /* mask: white keeps */
+#bites circle{fill:var(--black)}                         /* mask: black is the bite */
+.crumbs{position:absolute;left:0;top:0;width:0;height:0}
+.crumbs i{position:absolute;left:0;top:0;width:5px;height:5px;margin:-2.5px;border-radius:2px;background:var(--dough);opacity:0;will-change:transform,opacity}
+.crumbs i:nth-child(3n){background:var(--chip)}
+h3{font-size:var(--fs-xl);font-weight:var(--fw-bold);letter-spacing:-.02em;color:var(--text)}
+p{margin-top:3px;font-size:var(--fs-md);line-height:1.4;color:var(--muted)}
+.row{display:flex;gap:8px;margin-top:18px}
+.btn{
+  flex:1;height:44px;border:0;border-radius:var(--r-pill);cursor:pointer;will-change:transform;
+  font:var(--fw-bold) var(--fs-base) var(--font);letter-spacing:-.01em;-webkit-tap-highlight-color:transparent;
+}
+.no{background:var(--fill-2);color:var(--text)}
+.yes{background:var(--inverse);color:var(--on-inverse)}
+.btn:focus-visible{outline:2px solid var(--text-2);outline-offset:2px}
+.done{
+  position:absolute;left:50%;top:50%;display:flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;white-space:nowrap;
+  font-size:var(--fs-md);font-weight:var(--fw-medium);color:var(--text);opacity:0;pointer-events:none;will-change:opacity,transform;
+}
+.done svg{width:20px;height:20px;border-radius:50%;background:var(--fill-3)}
+.done.is-yes svg{background:var(--green)}
+.done path{fill:none;stroke:var(--text);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1}
+.done.is-yes path{stroke:var(--on-green)}
+
+</style>
+</head>
+<body>
+<div class="banner" id="banner" role="region" aria-label="Cookie consent">
+  <div class="body" id="body">
+    <div class="top">
+      <div class="plate">
+        <svg class="cookie" id="cookie" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <radialGradient id="cookie-dough" cx=".34" cy=".26" r=".86"><stop class="d0" offset="0"/><stop class="d1" offset=".5"/><stop class="d2" offset="1"/></radialGradient>
+            <radialGradient id="cookie-chip" cx=".36" cy=".3" r=".8"><stop class="c0" offset="0"/><stop class="c1" offset="1"/></radialGradient>
+            <radialGradient id="cookie-dent" cx=".5" cy=".62" r=".6"><stop class="n0" offset="0"/><stop class="n1" offset="1"/></radialGradient>
+            <mask id="cookie-bites" maskUnits="userSpaceOnUse" x="-8" y="-8" width="80" height="80"><rect class="keep" x="-8" y="-8" width="80" height="80"/><g id="bites"></g></mask>
+          </defs>
+          <g mask="url(#cookie-bites)">
+            <circle class="edge" cx="32" cy="32" r="30"/>
+            <circle class="dough" cx="32" cy="31.2" r="29"/>
+            <ellipse class="dent" cx="14" cy="27" rx="3.2" ry="2.4"/><ellipse class="dent" cx="34" cy="26" rx="2.6" ry="2"/><ellipse class="dent" cx="50" cy="42" rx="2.8" ry="2.2"/><ellipse class="dent" cx="27" cy="43" rx="2.2" ry="1.7"/>
+            <g class="chips">
+              <circle cx="22" cy="19" r="4.4"/><circle cx="41" cy="16" r="3.3"/><circle cx="46" cy="31" r="4.2"/>
+              <circle cx="30" cy="34" r="3.5"/><circle cx="17" cy="38" r="3.1"/><circle cx="38" cy="48" r="4.4"/><circle cx="24" cy="51" r="2.7"/>
+            </g>
+          </g>
+        </svg>
+        <i class="crumbs" id="crumbs"></i>
+      </div>
+      <div class="copy"><h3>We use cookies</h3><p>They keep you signed in and show us what gets used.</p></div>
+    </div>
+    <div class="row">
+      <button class="btn no" id="no">No thanks</button>
+      <button class="btn yes" id="yes">Accept</button>
+    </div>
+  </div>
+  <div class="done" id="done" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="tick" pathLength="1" d="M6 12.5l4 4 8-9"/></svg><span id="msg">Cookies accepted</span></div>
+</div>
+<script>
+// Tiny spring engine shared by every component.
+// Springs, sim-time timers (so slow-mo slows them too), one rAF loop, and token readers.
+window.Motion = (() => {
+  // theme: shared by every page through localStorage, live-updated by the gallery
+  const setTheme = t => { document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark'; };
+  try { setTheme(localStorage.getItem('ms-theme')); } catch { setTheme('dark'); }
+  addEventListener('storage', e => { if (e.key === 'ms-theme') setTheme(e.newValue); });
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const S = (x, k = 400, c = 30) => ({ x, v: 0, t: x, k, c });
+  const tune = (s, k, c) => { s.k = k; s.c = reduce ? 2 * Math.sqrt(k) : c; };
+  const step = (s, dt) => { const a = -s.k * (s.x - s.t) - s.c * s.v; s.v += a * dt; s.x += s.v * dt; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  // tokens from shared/tokens.css
+  const token = (name, fallback = '') =>
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+  const num = (name, fallback) => parseFloat(token(name, String(fallback)));
+  const spring = (name, fallback) => token(name, fallback).split(/\s+/).map(Number);
+
+  let timeScale = 1;
+  const timers = [];
+  const after = (sec, fn) => { const t = { t: sec, fn }; timers.push(t); return t; };
+  const cancel = t => { const i = timers.indexOf(t); if (i > -1) timers.splice(i, 1); };
+
+  // slow motion, synced with a parent page when embedded
+  const slowListeners = [];
+  function setSlow(v, fromParent = false) {
+    timeScale = v ? .25 : 1;
+    slowListeners.forEach(f => f(v));
+    if (!fromParent && parent !== window) parent.postMessage({ type: 'motion:slow-changed', on: v }, '*');
+  }
+  addEventListener('message', e => {
+    if (e.data && e.data.type === 'motion:slow') setSlow(!!e.data.on, true);
+    if (e.data && e.data.type === 'motion:theme') setTheme(e.data.theme);
+  });
+
+  const comps = [];
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - last) / 1000, 1 / 30) * timeScale; last = now;
+    for (let i = timers.length - 1; i >= 0; i--) {
+      if ((timers[i].t -= dt) <= 0) timers.splice(i, 1)[0].fn();
+    }
+    const sub = 4;
+    for (let k = 0; k < sub; k++) comps.forEach(c => c.frame(dt / sub));
+    comps.forEach(c => c.render());
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  return {
+    S, tune, step, clamp, token, num, spring, after, cancel,
+    register: c => comps.push(c),
+    get timeScale() { return timeScale; },
+    get slow() { return timeScale !== 1; },
+    setSlow, onSlow: f => slowListeners.push(f),
+    svg: (p, sw = 1.8) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`,
+  };
+})();
+
+</script>
+<script>
+// Cookie Bite
+// Accept eats the cookie: three bites in a row, each one a cut in the cookie's
+// mask that pops open on a spring, with teeth marks, a wobble and crumbs that
+// fall with weight; then the last piece is gone. No thanks flicks it: it rolls
+// off the edge of the card and drops. After either, the banner's width, height
+// and corners spring down to a one-line note with a check that draws itself,
+// and a moment later it opens again with a fresh cookie dropped on the plate.
+(() => {
+  const { S, tune, step, clamp, spring, after } = Motion;
+  const $ = id => document.getElementById(id);
+  const banner = $('banner'), body = $('body'), cookie = $('cookie'), bitesG = $('bites'), crumbsEl = $('crumbs');
+  const yes = $('yes'), no = $('no'), done = $('done'), msg = $('msg'), tick = $('tick');
+  const NS = 'http://www.w3.org/2000/svg';
+
+  const T = { pop: spring('--spring-pop', '520 16'), settle: spring('--spring-settle', '280 22'), soft: spring('--spring-soft', '260 24'), fade: spring('--spring-fade', '420 32') };
+  // three bites, each a round cut on the rim with three teeth marks on its inner edge
+  const BITES = [-42, 28, 196].map(a => {
+    const r = a * Math.PI / 180, cx = 32 + Math.cos(r) * 30, cy = 32 + Math.sin(r) * 30;
+    const parts = [[cx, cy, 13]];
+    [-52, 0, 52].forEach(t => { const q = r + Math.PI + t * Math.PI / 180; parts.push([cx + Math.cos(q) * 11.5, cy + Math.sin(q) * 11.5, 5.2]); });
+    const els = parts.map(() => bitesG.appendChild(document.createElementNS(NS, 'circle')));
+    const s = S(0, 700, 22); tune(s, 700, 22);
+    return { parts, els, s, x: cx, y: cy, a: r };
+  });
+  const crumbs = Array.from({ length: 18 }, () => ({ el: crumbsEl.appendChild(document.createElement('i')), life: 0, x: 0, y: 0, vx: 0, vy: 0, r: 0, vr: 0 }));
+  let ci = 0;
+
+  const M = S(0, ...T.soft);                   // 0 banner, 1 note
+  const WW = S(0, ...T.soft), HH = S(0, 230, 22);
+  const CS = S(1, ...T.pop);                   // cookie scale
+  const CR = S(0, 190, 9);                     // cookie wobble
+  const CY = S(0, ...T.settle);                // cookie dropping onto the plate
+  const PY = S(1, ...T.pop), PN = S(1, ...T.pop);   // button presses
+  const TK = S(0, 160, 20);                    // the check drawing itself
+  [[M, T.soft], [WW, T.soft], [HH, [230, 22]], [CS, T.pop], [CR, [190, 9]], [CY, T.settle], [PY, T.pop], [PN, T.pop], [TK, [160, 20]]].forEach(([s, t]) => tune(s, ...t));
+
+  let W0 = 0, H0 = 0, W1 = 0, busy = false, flick = null, clock = 0, userUntil = 0, turn = 0;
+
+  function measure() {
+    W0 = Math.min(340, document.body.clientWidth - 32);
+    body.style.width = W0 + 'px';
+    H0 = body.offsetHeight; W1 = done.offsetWidth;
+    WW.t = M.t ? W1 : W0; HH.t = M.t ? 44 : H0;
+    if (!WW.x) { WW.x = WW.t; HH.x = HH.t; }
+  }
+  measure();
+  addEventListener('resize', measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  function spray(x, y, n, power) {             // crumbs, in the cookie's own 64 box
+    for (let i = 0; i < n; i++) {
+      const c = crumbs[ci++ % crumbs.length], a = Math.random() * Math.PI * 2;
+      c.life = .75 + Math.random() * .35; c.x = x - 32; c.y = y - 32;
+      c.vx = Math.cos(a) * power * (.4 + Math.random()); c.vy = -Math.abs(Math.sin(a)) * power * (.6 + Math.random()) - 40;
+      c.r = 0; c.vr = (Math.random() - .5) * 900;
+    }
+  }
+  function bite(i) {
+    const b = BITES[i];
+    b.s.t = 1; CR.v += (i % 2 ? -1 : 1) * 520; CS.x = .86;
+    spray(b.x, b.y, 5, 150);
+  }
+  function fold(text, ok) {
+    msg.textContent = text; done.classList.toggle('is-yes', ok);
+    W1 = done.offsetWidth;
+    M.t = 1; WW.t = W1; HH.t = 44; TK.x = 0; TK.t = 0;
+    after(.28, () => { TK.t = 1; });
+    after(2.1, open);
+  }
+  function open() {
+    BITES.forEach(b => { b.s.x = b.s.t = 0; b.s.v = 0; });
+    flick = null; CS.x = .4; CS.t = 1; CS.v = 0; CR.x = CR.v = 0; CY.x = -46; CY.v = 0; CY.t = 0;
+    M.t = 0; WW.t = W0; HH.t = H0;
+    after(.5, () => { busy = false; });
+  }
+  function accept() {
+    if (busy) return; busy = true; PY.x = .92;
+    [0, 1, 2].forEach(i => after(.1 + i * .27, () => bite(i)));
+    after(.1 + 3 * .27, () => { tune(CS, 600, 34); CS.t = 0; spray(32, 32, 6, 110); });
+    after(1.2, () => { tune(CS, ...T.pop); fold('Cookies accepted', true); });
+  }
+  function decline() {
+    if (busy) return; busy = true; PN.x = .92;
+    flick = { x: 0, y: 0, vx: -60, vy: 0 };     // rolls off the left edge of the card, then drops
+    after(.8, () => fold('Essentials only', false));
+  }
+  yes.addEventListener('click', () => { userUntil = clock + 8; accept(); });
+  no.addEventListener('click', () => { userUntil = clock + 8; decline(); });
+
+  // idle: accept, then decline, and round again
+  (function auto() {
+    if (clock >= userUntil && !busy) (turn++ % 2 ? decline : accept)();
+    after(1.5, auto);
+  })();
+
+  Motion.register({
+    frame(dt) {
+      clock += dt;
+      [M, WW, HH, CS, CR, CY, PY, PN, TK].forEach(s => step(s, dt));
+      BITES.forEach(b => step(b.s, dt));
+      if (flick) {
+        flick.vx -= 620 * dt; flick.x += flick.vx * dt;
+        if (flick.x < -46) { flick.vy += 1500 * dt; flick.y += flick.vy * dt; }
+      }
+      crumbs.forEach(c => {
+        if (c.life <= 0) return;
+        c.life -= dt; c.vy += 900 * dt; c.x += c.vx * dt; c.y += c.vy * dt; c.r += c.vr * dt;
+      });
+    },
+    render() {
+      const m = clamp(M.x, 0, 1);
+      banner.style.width = WW.x.toFixed(1) + 'px'; banner.style.height = HH.x.toFixed(1) + 'px';
+      banner.style.transform = `translate(${(-WW.x / 2).toFixed(1)}px,${(-HH.x / 2).toFixed(1)}px)`;
+      banner.style.borderRadius = Math.min(24, HH.x / 2).toFixed(1) + 'px';
+      body.style.opacity = clamp(1 - m * 2.2, 0, 1).toFixed(3);
+      body.style.transform = `translate(${((WW.x - W0) / 2).toFixed(1)}px,${((HH.x - H0) / 2).toFixed(1)}px)`;
+      body.style.pointerEvents = m > .1 ? 'none' : 'auto';
+      banner.style.overflow = M.t || m > .01 ? 'hidden' : 'visible';   // open, the cookie and its crumbs may leave the card; folding, nothing may
+      const d = clamp(m * 2.2 - 1.2, 0, 1);
+      done.style.opacity = d.toFixed(3);
+      done.style.transform = `translate(-50%,-50%) translateY(${((1 - d) * 8).toFixed(2)}px)`;
+      tick.style.strokeDashoffset = (1 - clamp(TK.x, 0, 1)).toFixed(4);
+      BITES.forEach(b => b.parts.forEach((p, i) => {
+        const k = Math.max(0, b.s.x);
+        b.els[i].setAttribute('cx', p[0].toFixed(2)); b.els[i].setAttribute('cy', p[1].toFixed(2)); b.els[i].setAttribute('r', (p[2] * k).toFixed(2));
+      }));
+      const fx = flick ? flick.x : 0, fy = flick ? flick.y : 0;
+      cookie.style.transform = `translate(${fx.toFixed(1)}px,${(fy + CY.x).toFixed(1)}px) rotate(${(CR.x * .012 + fx / 28).toFixed(4)}rad) scale(${Math.max(0, CS.x).toFixed(4)})`;
+      crumbs.forEach(c => {
+        const o = c.life <= 0 ? 0 : Math.min(1, c.life * 3);
+        c.el.style.opacity = o.toFixed(2);
+        if (o) c.el.style.transform = `translate(${(32 + c.x).toFixed(1)}px,${(32 + c.y).toFixed(1)}px) rotate(${c.r.toFixed(0)}deg)`;
+      });
+      yes.style.transform = `scale(${PY.x.toFixed(4)})`; no.style.transform = `scale(${PN.x.toFixed(4)})`;
+    },
+  });
+})();
+
+</script>
+</body>
+</html>
