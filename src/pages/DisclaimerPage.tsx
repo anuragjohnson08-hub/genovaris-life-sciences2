@@ -55,7 +55,7 @@ export function DisclaimerPage({ embedded = false }: DisclaimerPageProps) {
           <SectionKicker label="Clinical & Regulatory Transparency" />
           <HeadingTag
             id="disclaimer-section-heading"
-            className="mt-3.5 text-[clamp(1.9rem,3.2vw,2.65rem)] font-bold leading-[1.12] tracking-[-0.03em] text-[#153226]"
+            className="mt-3.5 text-[clamp(1.9rem,3.2vw,2.65rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-[#153226]"
           >
             Important information &amp; disclaimer
           </HeadingTag>
@@ -85,7 +85,7 @@ export function DisclaimerPage({ embedded = false }: DisclaimerPageProps) {
               <span className="font-mono text-[12.5px] font-medium tabular-nums text-[#556B5F]">
                 {section.number}.
               </span>
-              <h3 className="mt-2 text-[19px] font-bold tracking-[-0.02em] text-[#153226]">
+              <h3 className="mt-2 font-display text-[20px] font-semibold tracking-[-0.015em] text-[#153226]">
                 {section.title}
               </h3>
               <p className="mt-3 text-[15px] leading-[1.68] text-[#4C6156]">

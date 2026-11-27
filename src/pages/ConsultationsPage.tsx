@@ -4,18 +4,25 @@ import { motion } from 'motion/react';
 import {
   AlertCircle,
   ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
   Bookmark,
   CheckCircle2,
   Clock,
+  Lock,
   Mail,
   MapPin,
   Phone,
-  Send,
   ShieldCheck,
   Truck,
 } from 'lucide-react';
 import { SectionKicker } from '../components/SectionKicker';
 import { ImportantNoticeCard } from '../components/ImportantNoticeCard';
+import {
+  SpringySubmitButton,
+  type SubmitFeedbackTrigger,
+} from '../components/SpringySubmitButton';
+import { SupplyNetworkDirectory } from '../components/SupplyNetworkDirectory';
 import { useRegimen } from '../context/RegimenContext';
 import {
   appendSupplyInquiry,
@@ -29,8 +36,14 @@ import type {
 import { validateSupplyInquiryInput } from '../utils/regimenLogic';
 import { triggerHaptic } from '../utils/haptics';
 import { IOS_SPRING_SNAPPY } from '../utils/motion';
-import { handleInPageAnchorClick } from '../utils/sectionNavigation';
-import { INDIAN_SUPPLY_LOCATIONS } from '../data/indianLocations';
+import {
+  handleInPageAnchorClick,
+  scrollToDocumentAnchor,
+} from '../utils/sectionNavigation';
+import {
+  INDIAN_SUPPLY_LOCATIONS,
+  type IndianSupplyLocation,
+} from '../data/indianLocations';
 import {
   checkSupplyTransportAvailability,
   findIndianLocationByCityOrLabel,
@@ -52,7 +65,8 @@ export interface ConsultationsPageProps {
 
 export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) {
   const [searchParams] = useSearchParams();
-  const { products, regimen, openRegimen } = useRegimen();
+  const { products, regimen, openRegimen, b2bVerification, b2bGate } =
+    useRegimen();
 
   const initialProductSlug = searchParams.get('product') ?? '';
 
@@ -75,6 +89,8 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
   });
 
   const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
+  const [submitFeedback, setSubmitFeedback] =
+    useState<SubmitFeedbackTrigger | null>(null);
   const [transportCheck, setTransportCheck] =
     useState<TransportAvailabilityResult | null>(null);
   const [latestConfirmation, setLatestConfirmation] =
@@ -95,13 +111,27 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
   }, [initialProductSlug]);
 
   useEffect(() => {
-    if (latestConfirmation) {
-      confirmationRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+    if (b2bVerification.verified && b2bVerification.businessName) {
+      setFormState((prev) =>
+        prev.organization.trim()
+          ? prev
+          : { ...prev, organization: b2bVerification.businessName }
+      );
+    }
+  }, [b2bVerification.verified, b2bVerification.businessName]);
+
+  useEffect(() => {
+    if (b2bGate.isFullyVerified) {
+      setFieldErrors((prev) => {
+        if (!prev.b2bVerification) return prev;
+        const next = { ...prev };
+        delete next.b2bVerification;
+        return next;
       });
     }
-  }, [latestConfirmation]);
+  }, [b2bGate.isFullyVerified]);
+
+  // Keep viewport steady on the submit button so the user sees the full spring morph & checkmark animation.
 
   const toggleProductSelection = (slug: string) => {
     triggerHaptic('selection');
@@ -128,21 +158,46 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
     setLatestConfirmation(null);
 
     const validation = validateSupplyInquiryInput(formState);
+    if (!b2bGate.isFullyVerified) {
+      validation.b2bVerification =
+        'Complete the mandatory B2B Trade & License Verification above (Drug License, GSTIN, FSSAI & all 4 statutory declarations) before submitting a wholesale supply inquiry.';
+    }
     if (Object.keys(validation).length > 0) {
       triggerHaptic('warning');
       setFieldErrors(validation);
+      setSubmitFeedback((prev) => ({
+        kind: 'error',
+        nonce: (prev?.nonce ?? 0) + 1,
+      }));
       return;
     }
 
     setFieldErrors({});
     setTransportCheck(null);
-    const created = appendSupplyInquiry(formState);
+    setSubmitFeedback((prev) => ({
+      kind: 'success',
+      nonce: (prev?.nonce ?? 0) + 1,
+    }));
+    const created = appendSupplyInquiry({
+      ...formState,
+      organization:
+        formState.organization.trim() || b2bVerification.businessName,
+      b2bLicenseSummary: {
+        businessName: b2bVerification.businessName,
+        entityType: b2bVerification.entityType,
+        drugLicenseNumber: b2bVerification.drugLicenseNumber,
+        gstin: b2bVerification.gstin,
+        fssaiNumber: b2bVerification.fssaiNumber,
+        gstStateName: b2bVerification.gstStateName,
+        verifiedAt: b2bVerification.verifiedAt,
+      },
+    });
     triggerHaptic('success');
     setLatestConfirmation(created);
     setHistory((prev) => [created, ...prev]);
     setFormState({
       fullName: '',
-      organization: '',
+      organization: b2bVerification.businessName,
       email: '',
       phone: '',
       inquiryType: INQUIRY_TYPES[0],
@@ -188,6 +243,32 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
     }
   };
 
+  const handleSelectDirectoryLocation = (location: IndianSupplyLocation) => {
+    const locationLabel = `${location.city}, ${location.state}`;
+    const result = checkSupplyTransportAvailability(
+      location.pincode,
+      locationLabel,
+    );
+    setFormState((prev) => ({
+      ...prev,
+      cityRegion: locationLabel,
+      pincode: location.pincode,
+    }));
+    setTransportCheck(result);
+    if (result.status === 'available') {
+      triggerHaptic('success');
+      setFieldErrors((prev) => {
+        if (!prev.pincode) return prev;
+        const next = { ...prev };
+        delete next.pincode;
+        return next;
+      });
+    } else {
+      triggerHaptic('warning');
+    }
+    scrollToDocumentAnchor('supply-form-heading');
+  };
+
   const resolveProductName = (slug: string) =>
     products.find((p) => p.slug === slug)?.name ?? slug;
 
@@ -207,7 +288,7 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
         <SectionKicker label="Supply & Distribution Desk" />
         <HeadingTag
           id="supply-contact-heading"
-          className="mt-3.5 text-[clamp(1.9rem,3.3vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.03em] text-[#153226]"
+          className="mt-3.5 text-[clamp(1.9rem,3.3vw,2.75rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-[#153226]"
         >
           Contact for medicine supply
         </HeadingTag>
@@ -226,7 +307,7 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
         >
           <h2
             id="supply-form-heading"
-            className="text-[20px] font-bold tracking-[-0.02em] text-[#153226]"
+            className="font-ui text-[19px] font-bold tracking-[-0.015em] text-[#153226]"
           >
             Request supply &amp; product details
           </h2>
@@ -571,6 +652,23 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
                       </div>
                     </div>
                   )}
+
+                  <p className="mt-2 text-[12.5px] text-[#556B5F]">
+                    <a
+                      href="#supply-network"
+                      onClick={(e) => {
+                        triggerHaptic('selection');
+                        handleInPageAnchorClick(e, 'supply-network');
+                      }}
+                      className="inline-flex items-center gap-1 font-semibold text-[#173A2C] hover:text-[#102B20] underline underline-offset-4 transition-colors"
+                    >
+                      <span>
+                        View all {INDIAN_SUPPLY_LOCATIONS.length} Indian supply
+                        locations &amp; verification markers
+                      </span>
+                      <ArrowRight size={12} aria-hidden="true" />
+                    </a>
+                  </p>
                 </div>
               </div>
             </div>
@@ -669,16 +767,85 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
               )}
             </div>
 
-            <div className="pt-2">
-              <motion.button
-                type="submit"
-                whileTap={{ scale: 0.97 }}
-                transition={IOS_SPRING_SNAPPY}
-                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#173A2C] px-7 py-3 text-[15px] font-medium text-white hover:bg-[#102B20] transition-colors cursor-pointer"
-              >
-                <Send size={15} strokeWidth={1.9} aria-hidden="true" />
-                <span>Submit supply inquiry</span>
-              </motion.button>
+            {/* Mandatory B2B License Gate Banner */}
+            <div
+              className={`rounded-2xl border p-4 ${
+                b2bGate.isFullyVerified
+                  ? 'border-[#BFD7C2] bg-[#EDF5EE] text-[#153226]'
+                  : 'border-[#DFC994] bg-[#FBF5E6] text-[#46340C]'
+              }`}
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-2.5">
+                  {b2bGate.isFullyVerified ? (
+                    <BadgeCheck
+                      size={18}
+                      strokeWidth={2.1}
+                      className="mt-0.5 shrink-0 text-[#173A2C]"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <Lock
+                      size={17}
+                      strokeWidth={2}
+                      className="mt-0.5 shrink-0 text-[#8F6510]"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <div className="text-[13px] leading-snug">
+                    <p className="font-semibold">
+                      {b2bGate.isFullyVerified
+                        ? `B2B Trade Licenses Verified · ${b2bVerification.businessName}`
+                        : 'Mandatory B2B License Verification Required'}
+                    </p>
+                    <p className="mt-0.5 opacity-90">
+                      {b2bGate.isFullyVerified
+                        ? `DL: ${b2bVerification.drugLicenseNumber} · GSTIN: ${b2bVerification.gstin} · FSSAI: ${b2bVerification.fssaiNumber}`
+                        : `Progress: ${b2bGate.overallPercent}% — Verify your Drug License, GSTIN, FSSAI & 4 statutory declarations before submitting.`}
+                    </p>
+                  </div>
+                </div>
+
+                {!b2bGate.isFullyVerified &&
+                  (embedded ? (
+                    <a
+                      href="#b2b-verification"
+                      onClick={(e) => {
+                        triggerHaptic('light');
+                        handleInPageAnchorClick(e, 'b2b-verification');
+                      }}
+                      className="inline-flex min-h-[36px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#173A2C] px-4 py-1.5 text-[12.5px] font-semibold text-white hover:bg-[#102B20] transition-colors whitespace-nowrap"
+                    >
+                      <span>Verify B2B Licenses</span>
+                      <ArrowUpRight size={13} aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <Link
+                      to="/responsible-use#b2b-verification"
+                      onClick={() => triggerHaptic('light')}
+                      className="inline-flex min-h-[36px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#173A2C] px-4 py-1.5 text-[12.5px] font-semibold text-white hover:bg-[#102B20] transition-colors whitespace-nowrap"
+                    >
+                      <span>Verify B2B Licenses</span>
+                      <ArrowUpRight size={13} aria-hidden="true" />
+                    </Link>
+                  ))}
+              </div>
+              {fieldErrors.b2bVerification && (
+                <p
+                  role="alert"
+                  className="mt-2.5 border-t border-[#E6D5A9] pt-2 text-[13px] font-medium text-[#8E2F1B]"
+                >
+                  {fieldErrors.b2bVerification}
+                </p>
+              )}
+            </div>
+
+            <div className="pt-1">
+              <SpringySubmitButton
+                idleLabel="Submit supply inquiry"
+                successLabel="Inquiry submitted"
+                feedback={submitFeedback}
+              />
             </div>
           </form>
         </section>
@@ -686,7 +853,9 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
         {/* Right Column: Direct Supply Contact Details + Shortlist + Saved Log */}
         <aside className="lg:col-span-5 space-y-6">
           <div className="rounded-3xl border border-[#E3E9E0] bg-[#153226] text-white p-6 sm:p-7">
-            <h2 className="text-[18px] font-bold">Direct supply contact</h2>
+            <h2 className="font-ui text-[18px] font-bold tracking-[-0.01em]">
+              Direct supply contact
+            </h2>
             <p className="mt-2 text-[14px] leading-relaxed text-[#C9DDD2]">
               Reach our distribution and trade supply desk directly for rate
               cards, stockist onboarding, and dispatch timelines.
@@ -798,7 +967,9 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 text-[#153226]">
                 <Bookmark size={18} strokeWidth={1.85} aria-hidden="true" />
-                <h2 className="text-[17px] font-bold">Your Supply Shortlist</h2>
+                <h2 className="font-ui text-[17px] font-bold">
+                  Your Supply Shortlist
+                </h2>
               </div>
               <span className="font-mono text-[12px] tabular-nums text-[#4C6156]">
                 {regimen.length} selected
@@ -882,7 +1053,7 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
 
           {/* Saved Inquiries Log */}
           <div className="rounded-3xl border border-[#E3E9E0] bg-[#FEFDF9] p-6 sm:p-7">
-            <h2 className="text-[17px] font-bold text-[#153226]">
+            <h2 className="font-ui text-[17px] font-bold text-[#153226]">
               Recent supply inquiries
             </h2>
             {history.length === 0 ? (
@@ -906,6 +1077,12 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
                       {item.fullName}
                       {item.organization ? ` · ${item.organization}` : ''}
                     </p>
+                    {item.b2bLicenseSummary && (
+                      <p className="mt-0.5 font-mono text-[11.5px] text-[#2F5744]">
+                        Verified DL: {item.b2bLicenseSummary.drugLicenseNumber} ·
+                        GSTIN: {item.b2bLicenseSummary.gstin}
+                      </p>
+                    )}
                     {item.productSlugs.length > 0 && (
                       <p className="mt-0.5 text-[12.5px] font-medium text-[#3D574A]">
                         {item.productSlugs.map(resolveProductName).join(', ')}
@@ -921,6 +1098,13 @@ export function ConsultationsPage({ embedded = false }: ConsultationsPageProps) 
           </div>
         </aside>
       </div>
+
+      {/* Pan-India Supply Network & Business Verification Directory */}
+      <SupplyNetworkDirectory
+        embedded={embedded}
+        selectedPincode={formState.pincode ?? ''}
+        onSelectLocation={handleSelectDirectoryLocation}
+      />
 
       {!embedded && (
         <div className="mt-14">

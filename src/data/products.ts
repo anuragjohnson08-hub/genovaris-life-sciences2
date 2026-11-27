@@ -2,34 +2,39 @@ import type { ProductFormulation } from '../types/medicine';
 
 export interface ChecklistItemDefinition {
   id: string;
+  badge: string;
   title: string;
   description: string;
 }
 
 export const INFORMED_CHOICE_CHECKLIST: ChecklistItemDefinition[] = [
   {
-    id: 'verify-label',
-    title: 'Review verified product composition and cautions.',
+    id: 'drug-license-active',
+    badge: 'Drug Control',
+    title: 'Active State Drug License (Form 20/21 or 20B/21B) held for resale or dispensing.',
     description:
-      'Compare active ingredient strengths, serving directions, and pack label disclosures directly on the physical Genovaris Lifesciences packaging.',
+      'We hold a valid, non-expired retail or wholesale Drug License issued by the State Drug Control Authority authorizing pharmaceutical stock purchase, storage, and trade.',
   },
   {
-    id: 'consult-clinician',
-    title: 'Ask a qualified healthcare professional for advice tailored to you.',
+    id: 'gst-authorized-entity',
+    badge: 'B2B Trade Only',
+    title: 'Registered Indian GST business entity authorized for B2B pharmaceutical procurement.',
     description:
-      'Discuss bone density, iron status, neurological care, or nutritional goals with your doctor or pharmacist before starting a formulation.',
+      'Orders are placed strictly on behalf of a licensed pharmacy, hospital, clinic, or stockist firm with an active GSTIN—not for unauthorized consumer resale.',
   },
   {
-    id: 'preserve-prescriptions',
-    title: 'Do not replace prescribed treatment without professional guidance.',
+    id: 'fssai-nutraceutical-permit',
+    badge: 'FSSAI Permit',
+    title: 'Valid FSSAI registration/license for nutraceutical & clinical nutrition inventory.',
     description:
-      'Nutritional and therapeutic formulations should always be used alongside medical oversight and as advised by a registered practitioner.',
+      'Our establishment maintains current FSSAI compliance required to stock, store, and distribute dietary and protein formulations such as Protizen-HP™.',
   },
   {
-    id: 'check-timing-overlap',
-    title: 'Check overlapping nutrients when combining daily products.',
+    id: 'gdp-storage-traceability',
+    badge: 'GDP & Audit',
+    title: 'Good Distribution Practice (GDP) storage, batch traceability & anti-diversion compliance.',
     description:
-      'When using multiple Genovaris formulations (such as Vitamin D3 or Iron-containing products), review total daily intake with your clinician.',
+      'We maintain temperature-safe (<25°C dry bay) storage, batch-to-invoice billing records, and agree not to divert stock to unlicensed sellers or unapproved online marketplaces.',
   },
 ];
 

@@ -70,7 +70,7 @@ export function FormulationCard({ product, index = 0 }: FormulationCardProps) {
             </p>
           </div>
 
-          <h3 className="mt-4 text-[22px] font-bold leading-snug tracking-[-0.02em] text-[#153226]">
+          <h3 className="mt-4 font-display text-[23px] font-semibold leading-snug tracking-[-0.015em] text-[#153226]">
             <Link
               to={`/products/${product.slug}`}
               onClick={() => triggerHaptic('selection')}

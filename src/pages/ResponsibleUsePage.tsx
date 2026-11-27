@@ -1,23 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
-import {
-  AlertCircle,
-  ArrowRight,
-  CheckCircle2,
-  Circle,
-  ClipboardCheck,
-} from 'lucide-react';
+import { AlertCircle, ArrowRight } from 'lucide-react';
 import { SectionKicker } from '../components/SectionKicker';
 import { ImportantNoticeCard } from '../components/ImportantNoticeCard';
+import { B2bComplianceCard } from '../components/B2bComplianceCard';
 import { useRegimen } from '../context/RegimenContext';
-import { INFORMED_CHOICE_CHECKLIST } from '../data/products';
-import {
-  computeChecklistProgress,
-  detectRegimenInteractions,
-} from '../utils/regimenLogic';
+import { detectRegimenInteractions } from '../utils/regimenLogic';
 import { triggerHaptic } from '../utils/haptics';
-import { IOS_SPRING_GENTLE, IOS_SPRING_SNAPPY } from '../utils/motion';
 import { handleInPageAnchorClick } from '../utils/sectionNavigation';
 
 const CLINICIAN_PREP_POINTS = [
@@ -46,17 +35,8 @@ export interface ResponsibleUsePageProps {
 }
 
 export function ResponsibleUsePage({ embedded = false }: ResponsibleUsePageProps) {
-  const { checkedIds, toggleChecklistItem, regimen, openRegimen } = useRegimen();
+  const { regimen, openRegimen } = useRegimen();
   const [imgFailed, setImgFailed] = useState(false);
-
-  const validIds = useMemo(
-    () => INFORMED_CHOICE_CHECKLIST.map((item) => item.id),
-    []
-  );
-  const progress = useMemo(
-    () => computeChecklistProgress(checkedIds, validIds),
-    [checkedIds, validIds]
-  );
 
   const regimenInteractions = useMemo(
     () => detectRegimenInteractions(regimen.map((entry) => entry.formulation)),
@@ -73,7 +53,7 @@ export function ResponsibleUsePage({ embedded = false }: ResponsibleUsePageProps
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-12">
             <div className="lg:col-span-6">
               <SectionKicker label="Make Informed Choices" />
-              <HeadingTag className="mt-4 text-[clamp(1.95rem,3.4vw,2.85rem)] font-bold leading-[1.12] tracking-[-0.03em] text-[#153226]">
+              <HeadingTag className="mt-4 text-[clamp(1.95rem,3.4vw,2.85rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-[#153226]">
                 Responsible use begins with clarity.
               </HeadingTag>
               <p className="mt-4 text-[16px] leading-[1.68] text-[#4C6156]">
@@ -136,83 +116,12 @@ export function ResponsibleUsePage({ embedded = false }: ResponsibleUsePageProps
         </div>
       </section>
 
-      {/* Interactive Readiness Checklist */}
+      {/* Mandatory B2B Trade & License Verification */}
       <section
         aria-labelledby="checklist-heading"
         className="mx-auto max-w-6xl px-5 sm:px-8 py-14 sm:py-20"
       >
-        <div className="rounded-3xl border border-[#E3E9E0] bg-[#FEFDF9] p-7 sm:p-10">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2.5 text-[#3B5B4B]">
-                <ClipboardCheck size={20} strokeWidth={1.8} aria-hidden="true" />
-                <h2
-                  id="checklist-heading"
-                  className="text-[22px] font-bold tracking-[-0.02em] text-[#153226]"
-                >
-                  Pre-routine safety checklist
-                </h2>
-              </div>
-              <p className="mt-1.5 text-[15px] text-[#4C6156]">
-                Check each step as you prepare to discuss or begin a Genovaris
-                formulation. Your progress is saved automatically.
-              </p>
-            </div>
-
-            <div className="text-left sm:text-right shrink-0">
-              <p className="font-mono text-[14px] font-medium tabular-nums text-[#153226]">
-                {progress.completed} / {progress.total} reviewed ({progress.percentage}%)
-              </p>
-              <div className="mt-2 h-2 w-44 overflow-hidden rounded-full bg-[#E6EDE4]">
-                <motion.div
-                  initial={false}
-                  animate={{ scaleX: progress.percentage / 100 }}
-                  transition={IOS_SPRING_GENTLE}
-                  className="h-full w-full origin-left rounded-full bg-[#173A2C] will-change-transform"
-                />
-              </div>
-            </div>
-          </div>
-
-          <ul className="mt-8 divide-y divide-[#EAEFE8]">
-            {INFORMED_CHOICE_CHECKLIST.map((item) => {
-              const checked = checkedIds.includes(item.id);
-              return (
-                <li key={item.id} className="py-4 first:pt-0 last:pb-0">
-                  <motion.button
-                    type="button"
-                    whileTap={{ scale: 0.995 }}
-                    transition={IOS_SPRING_SNAPPY}
-                    onClick={() => toggleChecklistItem(item.id)}
-                    aria-pressed={checked}
-                    className="flex w-full items-start gap-4 rounded-2xl p-2 -mx-2 text-left transition-colors hover:bg-[#F4F8F2] cursor-pointer"
-                  >
-                    <span
-                      className={`mt-0.5 shrink-0 transition-colors ${
-                        checked ? 'text-[#173A2C]' : 'text-[#6A8275]'
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {checked ? (
-                        <CheckCircle2 size={22} strokeWidth={2} />
-                      ) : (
-                        <Circle size={22} strokeWidth={1.75} />
-                      )}
-                    </span>
-                    <div>
-                      <span className="block text-[16px] font-semibold text-[#153226]">
-                        {item.title}
-                      </span>
-                      <span className="mt-1 block text-[14.5px] leading-[1.6] text-[#4C6156]">
-                        {item.description}
-                      </span>
-                    </div>
-                  </motion.button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        <B2bComplianceCard embedded={embedded} />
 
         {/* Live Regimen Overlap Banner if relevant */}
         {regimenInteractions.length > 0 && (
@@ -254,7 +163,7 @@ export function ResponsibleUsePage({ embedded = false }: ResponsibleUsePageProps
         {/* 3-Step Clinician Conversation Preparation */}
         <section className="mt-14">
           <SectionKicker label="Preparing for Your Appointment" />
-          <h2 className="mt-3.5 text-[26px] font-bold tracking-[-0.025em] text-[#153226]">
+          <h2 className="mt-3.5 text-[27px] font-semibold tracking-[-0.02em] text-[#153226]">
             How to partner with your healthcare professional
           </h2>
 
@@ -267,7 +176,7 @@ export function ResponsibleUsePage({ embedded = false }: ResponsibleUsePageProps
                 <span className="font-mono text-[13px] font-medium tabular-nums text-[#556B5F]">
                   {point.step}.
                 </span>
-                <h3 className="mt-3 text-[18px] font-bold leading-snug text-[#153226]">
+                <h3 className="mt-3 font-display text-[19px] font-semibold leading-snug tracking-[-0.015em] text-[#153226]">
                   {point.title}
                 </h3>
                 <p className="mt-2.5 text-[14.5px] leading-[1.65] text-[#4C6156]">

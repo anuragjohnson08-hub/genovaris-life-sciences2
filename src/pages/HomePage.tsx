@@ -134,7 +134,7 @@ export function HomePage({ initialSection }: HomePageProps) {
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.46, delay: 0.06, ease: IOS_EASE_OUT }}
-                className="mt-5 font-[family-name:var(--font-display)] text-[clamp(2.25rem,4.1vw,3.45rem)] font-bold leading-[1.09] tracking-[-0.03em] text-[#153226]"
+                className="mt-5 font-display text-[clamp(2.25rem,4.1vw,3.45rem)] font-semibold leading-[1.09] tracking-[-0.02em] text-[#153226]"
               >
                 A thoughtful place to explore wellness.
               </motion.h1>
@@ -276,7 +276,7 @@ export function HomePage({ initialSection }: HomePageProps) {
             <SectionKicker label="Explore the Range" />
             <h2
               id="product-info-heading"
-              className="mt-3.5 text-[clamp(1.85rem,3.1vw,2.5rem)] font-bold leading-[1.15] tracking-[-0.025em] text-[#153226]"
+              className="mt-3.5 text-[clamp(1.85rem,3.1vw,2.5rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-[#153226]"
             >
               Available medicines &amp; nutrition
             </h2>

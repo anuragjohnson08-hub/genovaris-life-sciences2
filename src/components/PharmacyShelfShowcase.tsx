@@ -203,11 +203,11 @@ export function PharmacyShelfShowcase({
       {showHeader && (
         <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#4B6658]">
+            <div className="inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[#4B6658]">
               <Store size={14} strokeWidth={1.9} aria-hidden="true" />
               <span>Retail Dispensary Display</span>
             </div>
-            <h2 className="mt-2.5 text-[clamp(1.6rem,2.7vw,2.15rem)] font-bold leading-[1.15] tracking-[-0.025em] text-[#153226]">
+            <h2 className="mt-2.5 text-[clamp(1.6rem,2.7vw,2.15rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-[#153226]">
               {heading}
             </h2>
             <p className="mt-2 text-[15px] leading-[1.6] text-[#4C6156]">
@@ -299,7 +299,7 @@ export function PharmacyShelfShowcase({
                         <Link
                           to={`/products/${product.slug}`}
                           onClick={() => triggerHaptic('selection')}
-                          className="text-[15.5px] font-bold text-[#153226] hover:text-[#23543F] transition-colors"
+                          className="font-display text-[16px] font-semibold text-[#153226] hover:text-[#23543F] transition-colors"
                         >
                           {product.name}
                         </Link>
@@ -370,12 +370,12 @@ export function PharmacyShelfShowcase({
           className="mt-5 flex flex-col gap-4 rounded-2xl border border-[#D4DFD1] bg-[#FEFDF9] p-5 md:flex-row md:items-center md:justify-between"
         >
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#556B5F]">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#556B5F]">
               Selected retail pack · {activeSpec.retailFormat}
             </p>
-            <h3 className="mt-1 text-[18px] font-bold text-[#153226]">
+            <h3 className="mt-1 font-display text-[19px] font-semibold text-[#153226]">
               {activeProduct.name}{' '}
-              <span className="font-mono text-[13.5px] font-medium text-[#556B5F]">
+              <span className="font-mono text-[13px] font-medium text-[#556B5F]">
                 ({activeSpec.packSizeLabel})
               </span>
             </h3>

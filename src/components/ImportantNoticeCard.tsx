@@ -25,7 +25,7 @@ export function ImportantNoticeCard({
         <div className="space-y-3 max-w-3xl">
           <h2
             id="important-information-heading"
-            className="text-[20px] font-bold tracking-[-0.02em] text-[#153226]"
+            className="font-ui text-[19px] font-bold tracking-[-0.015em] text-[#153226]"
           >
             Important information
           </h2>

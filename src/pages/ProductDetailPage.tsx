@@ -67,7 +67,7 @@ export function ProductDetailPage() {
   if (!product) {
     return (
       <div className="mx-auto max-w-3xl px-5 sm:px-8 py-20 text-center">
-        <h1 className="text-[28px] font-bold text-[#153226]">
+        <h1 className="text-[28px] font-semibold tracking-[-0.02em] text-[#153226]">
           Product not found
         </h1>
         <p className="mt-3 text-[16px] text-[#4C6156]">
@@ -132,7 +132,7 @@ export function ProductDetailPage() {
               </div>
             </div>
 
-            <h1 className="mt-6 text-[clamp(2rem,3.6vw,2.85rem)] font-bold leading-[1.12] tracking-[-0.03em] text-[#153226]">
+            <h1 className="mt-6 text-[clamp(2rem,3.6vw,2.85rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-[#153226]">
               {product.name}
             </h1>
             <p className="mt-2 text-[17px] font-medium text-[#2F4D3E]">
@@ -201,7 +201,7 @@ export function ProductDetailPage() {
 
         {/* Indicated Clinical Areas Strip */}
         <div className="mt-8 border-t border-[#D7E2D5] pt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[13.5px]">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#556B5F]">
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.13em] text-[#556B5F]">
             Indicated Clinical Areas
           </span>
           <p className="font-medium text-[#153226]">
@@ -230,7 +230,7 @@ export function ProductDetailPage() {
           <div>
             <h2
               id="visual-aid-heading"
-              className="text-[19px] font-bold tracking-[-0.02em] text-[#153226]"
+              className="text-[20px] font-semibold tracking-[-0.015em] text-[#153226]"
             >
               Official product visual aid
             </h2>
@@ -307,7 +307,7 @@ export function ProductDetailPage() {
           />
           <h2
             id="ingredients-heading"
-            className="text-[21px] font-bold tracking-[-0.02em] text-[#153226]"
+            className="text-[21px] font-semibold tracking-[-0.015em] text-[#153226]"
           >
             Active composition &amp; therapeutic roles
           </h2>
@@ -353,7 +353,7 @@ export function ProductDetailPage() {
         >
           <h2
             id="nutrition-facts-heading"
-            className="text-[20px] font-bold tracking-[-0.02em] text-[#153226]"
+            className="text-[20px] font-semibold tracking-[-0.015em] text-[#153226]"
           >
             Approximate nutritional profile
           </h2>
@@ -399,7 +399,7 @@ export function ProductDetailPage() {
         <section className="rounded-3xl border border-[#E3E9E0] bg-[#FEFDF9] p-7">
           <div className="flex items-center gap-2.5 text-[#3B5B4B]">
             <ShieldCheck size={19} strokeWidth={1.8} aria-hidden="true" />
-            <h2 className="text-[18px] font-bold text-[#153226]">
+            <h2 className="font-ui text-[17.5px] font-semibold text-[#153226]">
               Formulation synergy
             </h2>
           </div>
@@ -411,7 +411,7 @@ export function ProductDetailPage() {
         <section className="rounded-3xl border border-[#E3E9E0] bg-[#FEFDF9] p-7">
           <div className="flex items-center gap-2.5 text-[#3B5B4B]">
             <Clock size={19} strokeWidth={1.8} aria-hidden="true" />
-            <h2 className="text-[18px] font-bold text-[#153226]">
+            <h2 className="font-ui text-[17.5px] font-semibold text-[#153226]">
               Usage guidance
             </h2>
           </div>
@@ -434,7 +434,7 @@ export function ProductDetailPage() {
           <AlertTriangle size={19} strokeWidth={1.8} aria-hidden="true" />
           <h2
             id="cautions-heading"
-            className="text-[20px] font-bold tracking-[-0.02em] text-[#153226]"
+            className="text-[20px] font-semibold tracking-[-0.015em] text-[#153226]"
           >
             Cautions &amp; medical guidance
           </h2>
@@ -466,7 +466,7 @@ export function ProductDetailPage() {
       {related.length > 0 && (
         <section className="mt-16">
           <SectionKicker label="More from Genovaris Lifesciences" />
-          <h2 className="mt-3 text-[24px] font-bold tracking-[-0.02em] text-[#153226]">
+          <h2 className="mt-3 text-[25px] font-semibold tracking-[-0.02em] text-[#153226]">
             Other available products
           </h2>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">

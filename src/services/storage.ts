@@ -4,10 +4,24 @@ import type {
   SupplyInquiryRecord,
 } from '../types/medicine';
 import { GENOVARIS_PRODUCTS } from '../data/products';
+import type { B2bStoredVerification } from '../utils/b2bVerification';
 
 const REGIMEN_KEY = 'genovaris_supply_shortlist_v1';
-const CHECKLIST_KEY = 'genovaris_informed_checklist_v1';
+const CHECKLIST_KEY = 'genovaris_b2b_compliance_checklist_v2';
+const B2B_VERIFICATION_KEY = 'genovaris_b2b_credentials_v1';
 const INQUIRIES_KEY = 'genovaris_supply_inquiries_v1';
+
+const DEFAULT_B2B_VERIFICATION: B2bStoredVerification = {
+  businessName: '',
+  entityType: 'Wholesale Stockist / Distributor',
+  drugLicenseNumber: '',
+  gstin: '',
+  fssaiNumber: '',
+  verified: false,
+  verifiedAt: null,
+  gstStateName: null,
+  drugLicenseScope: null,
+};
 
 interface StoredRegimenItem {
   slug: string;
@@ -62,11 +76,26 @@ export function saveShortlistItems(entries: RegimenEntry[]): void {
 }
 
 export function loadChecklistIds(): string[] {
-  return readJson<string[]>(CHECKLIST_KEY, ['verify-label']);
+  return readJson<string[]>(CHECKLIST_KEY, []);
 }
 
 export function saveChecklistIds(ids: string[]): void {
   writeJson(CHECKLIST_KEY, Array.from(new Set(ids)));
+}
+
+export function loadB2bVerification(): B2bStoredVerification {
+  const stored = readJson<Partial<B2bStoredVerification>>(
+    B2B_VERIFICATION_KEY,
+    DEFAULT_B2B_VERIFICATION
+  );
+  return {
+    ...DEFAULT_B2B_VERIFICATION,
+    ...stored,
+  };
+}
+
+export function saveB2bVerification(state: B2bStoredVerification): void {
+  writeJson(B2B_VERIFICATION_KEY, state);
 }
 
 export function loadSupplyInquiries(): SupplyInquiryRecord[] {
@@ -88,6 +117,7 @@ export function appendSupplyInquiry(
     productSlugs: [...input.productSlugs],
     cityRegion: input.cityRegion.trim(),
     pincode: (input.pincode ?? '').trim() || undefined,
+    b2bLicenseSummary: input.b2bLicenseSummary,
     message: input.message.trim(),
     createdAt: new Date().toISOString(),
   };

@@ -7,19 +7,28 @@ import {
   type ReactNode,
 } from 'react';
 import type { ProductFormulation, RegimenEntry } from '../types/medicine';
-import { GENOVARIS_PRODUCTS } from '../data/products';
+import { GENOVARIS_PRODUCTS, INFORMED_CHOICE_CHECKLIST } from '../data/products';
 import {
+  loadB2bVerification,
   loadChecklistIds,
   loadSavedShortlist,
+  saveB2bVerification,
   saveChecklistIds,
   saveShortlistItems,
 } from '../services/storage';
+import {
+  computeB2bComplianceGate,
+  type B2bComplianceGateStatus,
+  type B2bStoredVerification,
+} from '../utils/b2bVerification';
 import { triggerHaptic } from '../utils/haptics';
 
 interface RegimenContextValue {
   products: ProductFormulation[];
   regimen: RegimenEntry[];
   checkedIds: string[];
+  b2bVerification: B2bStoredVerification;
+  b2bGate: B2bComplianceGateStatus;
   isRegimenOpen: boolean;
   openRegimen: () => void;
   closeRegimen: () => void;
@@ -27,9 +36,12 @@ interface RegimenContextValue {
   toggleRegimenItem: (slug: string, notes?: string) => void;
   removeFromRegimen: (slug: string) => void;
   toggleChecklistItem: (id: string) => void;
+  updateB2bVerification: (next: B2bStoredVerification) => void;
 }
 
 const RegimenContext = createContext<RegimenContextValue | null>(null);
+
+const REQUIRED_DECLARATION_IDS = INFORMED_CHOICE_CHECKLIST.map((item) => item.id);
 
 export function RegimenProvider({ children }: { children: ReactNode }) {
   const [regimen, setRegimen] = useState<RegimenEntry[]>(() =>
@@ -37,6 +49,9 @@ export function RegimenProvider({ children }: { children: ReactNode }) {
   );
   const [checkedIds, setCheckedIds] = useState<string[]>(() =>
     loadChecklistIds()
+  );
+  const [b2bVerification, setB2bVerification] = useState<B2bStoredVerification>(
+    () => loadB2bVerification()
   );
   const [isRegimenOpen, setIsRegimenOpen] = useState(false);
 
@@ -106,11 +121,28 @@ export function RegimenProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const updateB2bVerification = useCallback((next: B2bStoredVerification) => {
+    setB2bVerification(next);
+    saveB2bVerification(next);
+  }, []);
+
+  const b2bGate = useMemo(
+    () =>
+      computeB2bComplianceGate(
+        b2bVerification.verified,
+        checkedIds,
+        REQUIRED_DECLARATION_IDS
+      ),
+    [b2bVerification.verified, checkedIds]
+  );
+
   const value = useMemo<RegimenContextValue>(
     () => ({
       products: GENOVARIS_PRODUCTS,
       regimen,
       checkedIds,
+      b2bVerification,
+      b2bGate,
       isRegimenOpen,
       openRegimen,
       closeRegimen,
@@ -118,10 +150,13 @@ export function RegimenProvider({ children }: { children: ReactNode }) {
       toggleRegimenItem,
       removeFromRegimen,
       toggleChecklistItem,
+      updateB2bVerification,
     }),
     [
       regimen,
       checkedIds,
+      b2bVerification,
+      b2bGate,
       isRegimenOpen,
       openRegimen,
       closeRegimen,
@@ -129,6 +164,7 @@ export function RegimenProvider({ children }: { children: ReactNode }) {
       toggleRegimenItem,
       removeFromRegimen,
       toggleChecklistItem,
+      updateB2bVerification,
     ]
   );
 

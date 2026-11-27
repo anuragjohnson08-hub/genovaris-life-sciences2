@@ -36,7 +36,7 @@ export function BrandMark({ tone = 'dark' }: BrandMarkProps) {
         />
       </svg>
       <span
-        className={`font-[family-name:var(--font-display)] text-[1.2rem] font-bold tracking-[-0.03em] leading-none ${
+        className={`font-display text-[1.28rem] font-semibold tracking-[-0.02em] leading-none ${
           tone === 'light' ? 'text-white' : 'text-[#153226]'
         }`}
       >

@@ -94,6 +94,16 @@ export interface RegimenEntry {
   formulation: ProductFormulation;
 }
 
+export interface B2bLicenseSummary {
+  businessName: string;
+  entityType: string;
+  drugLicenseNumber: string;
+  gstin: string;
+  fssaiNumber: string;
+  gstStateName?: string | null;
+  verifiedAt?: string | null;
+}
+
 export interface SupplyInquiryRecord {
   id: string;
   referenceCode: string;
@@ -105,6 +115,7 @@ export interface SupplyInquiryRecord {
   productSlugs: string[];
   cityRegion: string;
   pincode?: string;
+  b2bLicenseSummary?: B2bLicenseSummary;
   message: string;
   createdAt: string;
 }
@@ -118,6 +129,7 @@ export interface SupplyInquiryInput {
   productSlugs: string[];
   cityRegion: string;
   pincode?: string;
+  b2bLicenseSummary?: B2bLicenseSummary;
   message: string;
   acknowledgedDisclaimer: boolean;
 }
@@ -128,6 +140,7 @@ export interface ValidationErrors {
   phone?: string;
   inquiryType?: string;
   pincode?: string;
+  b2bVerification?: string;
   message?: string;
   acknowledgedDisclaimer?: string;
 }

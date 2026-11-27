@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-heading: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
@@ -49,8 +49,25 @@
     color: #153226;
   }
 
-  h1, h2, h3, h4 {
+  body,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2 {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" 40, "WONK" 0;
+    text-wrap: balance;
+  }
+
+  h3,
+  h4 {
+    font-family: var(--font-sans);
     text-wrap: balance;
   }
 
@@ -58,6 +75,17 @@
     outline: 2px solid #173A2C;
     outline-offset: 2px;
   }
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 40, "WONK" 0;
+}
+
+.font-ui {
+  font-family: var(--font-sans);
+  font-variation-settings: normal;
 }
 
 .tabular-nums {
@@ -114,6 +142,87 @@
     clip-path 320ms cubic-bezier(0.22, 1, 0.36, 1) 85ms;
 }
 
+/* Springy Submit Button — adapted from Springy Input kinetic choreography */
+.springy-ch {
+  display: inline-block;
+  font-kerning: none;
+  transform-origin: 50% 80%;
+  will-change: transform, opacity, filter;
+}
+
+.springy-ch-drop {
+  animation: springy-drop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--springy-d, 0ms);
+}
+
+.springy-ch-nope {
+  animation: springy-nope 0.46s ease both;
+  animation-delay: var(--springy-d, 0ms);
+}
+
+.springy-ch-fly {
+  animation: springy-fly 0.42s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+  animation-delay: var(--springy-d, 0ms);
+}
+
+@keyframes springy-drop {
+  0% {
+    transform: translateY(14px) rotate(-16deg) scale(0.5);
+    opacity: 0;
+    filter: blur(3px);
+  }
+  55% {
+    transform: translateY(-3px) rotate(4deg) scale(1.1);
+    opacity: 1;
+    filter: none;
+  }
+  80% {
+    transform: translateY(1px) rotate(-1deg) scale(0.98);
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+}
+
+@keyframes springy-nope {
+  0%,
+  100% {
+    transform: none;
+  }
+  20% {
+    transform: translateX(-4px) rotate(-8deg);
+  }
+  40% {
+    transform: translateX(4px) rotate(6deg);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+}
+
+@keyframes springy-fly {
+  to {
+    transform: translateY(-28px) scale(0.6);
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+.springy-check-path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+}
+
+.springy-btn-ok .springy-check-path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.45s cubic-bezier(0.65, 0, 0.35, 1) 0.26s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -123,5 +232,17 @@
     clip-path: inset(1px calc(0% + 0px) 1px calc(0% + 0px) round 9999px);
     transform: scale(1) translateZ(0);
     transition: opacity 150ms ease;
+  }
+
+  .springy-ch-drop,
+  .springy-ch-nope,
+  .springy-ch-fly {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+
+  .springy-btn-ok .springy-check-path {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
 }
