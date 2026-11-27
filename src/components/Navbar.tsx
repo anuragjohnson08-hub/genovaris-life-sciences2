@@ -86,7 +86,7 @@ export function Navbar() {
 
     const onHashChange = () => {
       const hashTarget = resolveSectionIdFromPathOrHash(
-        window.location.pathname,
+        location.pathname,
         window.location.hash,
       );
       if (hashTarget) {

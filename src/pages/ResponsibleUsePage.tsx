@@ -8,6 +8,7 @@ import { useRegimen } from '../context/RegimenContext';
 import { detectRegimenInteractions } from '../utils/regimenLogic';
 import { triggerHaptic } from '../utils/haptics';
 import { handleInPageAnchorClick } from '../utils/sectionNavigation';
+import { resolvePublicAssetUrl } from '../utils/assetUrl';
 
 const CLINICIAN_PREP_POINTS = [
   {
@@ -99,7 +100,7 @@ export function ResponsibleUsePage({ embedded = false }: ResponsibleUsePageProps
               <div className="overflow-hidden rounded-3xl bg-[#D4DFD1] aspect-[16/11]">
                 {!imgFailed ? (
                   <img
-                    src="/assets/wellbeing-portrait.webp"
+                    src={resolvePublicAssetUrl('assets/wellbeing-portrait.webp')}
                     alt="Woman seated calmly outdoors in natural light"
                     referrerPolicy="no-referrer"
                     onError={() => setImgFailed(true)}

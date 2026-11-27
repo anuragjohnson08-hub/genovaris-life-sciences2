@@ -18,6 +18,7 @@ import { useRegimen } from '../context/RegimenContext';
 import type { TherapeuticCategory } from '../types/medicine';
 import { filterFormulations } from '../utils/regimenLogic';
 import { triggerHaptic } from '../utils/haptics';
+import { resolvePublicAssetUrl } from '../utils/assetUrl';
 import {
   IOS_EASE_OUT,
   IOS_REVEAL_TRANSITION,
@@ -239,7 +240,7 @@ export function HomePage({ initialSection }: HomePageProps) {
                   className="h-full w-full"
                 >
                   <motion.img
-                    src="/assets/hero-botanical.webp"
+                    src={resolvePublicAssetUrl('assets/hero-botanical.webp')}
                     alt="Sunlit eucalyptus leaves and medicinal botanical stems casting gentle shadows against a warm plaster wall"
                     referrerPolicy="no-referrer"
                     onError={() => setHeroImgFailed(true)}

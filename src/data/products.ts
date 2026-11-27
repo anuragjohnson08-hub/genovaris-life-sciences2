@@ -1,4 +1,5 @@
 import type { ProductFormulation } from '../types/medicine';
+import { resolvePublicAssetUrl } from '../utils/assetUrl';
 
 export interface ChecklistItemDefinition {
   id: string;
@@ -52,8 +53,8 @@ export const GENOVARIS_PRODUCTS: ProductFormulation[] = [
     packDetail: 'Calcium Carbonate 1000 mg + K2-7 + Zinc + Magnesium + D3',
     icon: 'bone',
     medallionBg: '#E3ECE8',
-    brochureImage: '/assets/aistudio/IMG-20260924-WA0006_f109ee7a.jpg',
-    cardImage: '/assets/cards/bonebro-card.jpg',
+    brochureImage: resolvePublicAssetUrl('assets/aistudio/IMG-20260924-WA0006_f109ee7a.jpg'),
+    cardImage: resolvePublicAssetUrl('assets/cards/bonebro-card.jpg'),
     compositionLine:
       'Calcium Carbonate 1000 mg + Vit. K2-7 45 mcg + Zinc Sulphate 7.5 mg + Magnesium Oxide 50 mg + Vit. D3 250 IU',
     summary:
@@ -304,8 +305,8 @@ export const GENOVARIS_PRODUCTS: ProductFormulation[] = [
     packDetail: 'Ferrous Ascorbate 100 mg + Folic Acid 1.5 mg + B12 + B6 + D3 1000 IU',
     icon: 'droplet',
     medallionBg: '#F2E4E7',
-    brochureImage: '/assets/aistudio/IMG-20260924-WA0005_45f9ef0d.jpg',
-    cardImage: '/assets/cards/red-xt-card.jpg',
+    brochureImage: resolvePublicAssetUrl('assets/aistudio/IMG-20260924-WA0005_45f9ef0d.jpg'),
+    cardImage: resolvePublicAssetUrl('assets/cards/red-xt-card.jpg'),
     compositionLine:
       'Ferrous Ascorbate 100 mg + Folic Acid 1.5 mg + Cyanocobalamin 15 mcg + Pyridoxine HCl 3 mg + Vit. D3 1000 IU',
     summary:
@@ -539,8 +540,8 @@ export const GENOVARIS_PRODUCTS: ProductFormulation[] = [
     packDetail: 'Cerebroprotein 90 mg + Omega-3 (30%) 150 mg + Vit. E + D3 + B12',
     icon: 'brain',
     medallionBg: '#E3ECF2',
-    brochureImage: '/assets/aistudio/IMG-20260924-WA0007_fb97e132.jpg',
-    cardImage: '/assets/cards/cerebra-cb-card.jpg',
+    brochureImage: resolvePublicAssetUrl('assets/aistudio/IMG-20260924-WA0007_fb97e132.jpg'),
+    cardImage: resolvePublicAssetUrl('assets/cards/cerebra-cb-card.jpg'),
     compositionLine:
       'Cerebroprotein 90 mg + Omega-3 Fatty Acid (30%) 150 mg + Vit. E 7.5 mg + Vit. D3 300 IU + Vit. B12 1.2 mcg',
     summary:
@@ -770,8 +771,8 @@ export const GENOVARIS_PRODUCTS: ProductFormulation[] = [
     packDetail: 'Sugar Free · Trans Fats Free · Gluten Free · With Whey Protein & DHA',
     icon: 'nutrition',
     medallionBg: '#EFE8E2',
-    brochureImage: '/assets/aistudio/IMG-20260924-WA0004_386980f8.jpg',
-    cardImage: '/assets/cards/protizen-hp-card.jpg',
+    brochureImage: resolvePublicAssetUrl('assets/aistudio/IMG-20260924-WA0004_386980f8.jpg'),
+    cardImage: resolvePublicAssetUrl('assets/cards/protizen-hp-card.jpg'),
     compositionLine:
       'Whey Protein + Skimmed Milk Protein + DHA + 10 Essential Vitamins + 11 Essential Minerals (Sugar Free · Gluten Free)',
     summary:

@@ -5,11 +5,14 @@ import { CookieConsentProvider } from './context/CookieConsentContext';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
+import { resolveRouterBasename } from './utils/assetUrl';
+
+const routerBasename = resolveRouterBasename();
 
 export default function App() {
   return (
     <MotionConfig reducedMotion="user">
-      <BrowserRouter>
+      <BrowserRouter basename={routerBasename}>
         <CookieConsentProvider>
           <RegimenProvider>
             <Routes>

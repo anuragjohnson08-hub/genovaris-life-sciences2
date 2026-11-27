@@ -4,14 +4,25 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+function normalizeBasePath(rawBase?: string): string {
+  const trimmed = rawBase?.trim();
+  if (!trimmed || trimmed === '/') {
+    return '/';
+  }
+  const withLeading = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  return withLeading.endsWith('/') ? withLeading : `${withLeading}/`;
+}
+
 export default defineConfig(() => {
   return {
+    base: normalizeBasePath(process.env.VITE_BASE_PATH),
     plugins: [
       react(),
       tailwindcss(),
       // Copies src/assets into dist/ so root-relative URLs like
       // "/src/assets/images/..." (e.g. generate_image output) still resolve
-      // in production builds. Do not remove.
+      // in production builds, and duplicates index.html to 404.html so
+      // GitHub Pages serves client-side routes cleanly on page refresh.
       {
         name: 'copy-unbundled-src-assets',
         apply: 'build',
@@ -24,6 +35,11 @@ export default defineConfig(() => {
           const distAssets = path.resolve(distDir, 'src/assets');
           if (fs.existsSync(distDir) && fs.existsSync(srcAssets)) {
             fs.cpSync(srcAssets, distAssets, {recursive: true, force: true});
+          }
+          const indexHtml = path.resolve(distDir, 'index.html');
+          const fallback404 = path.resolve(distDir, '404.html');
+          if (fs.existsSync(indexHtml)) {
+            fs.copyFileSync(indexHtml, fallback404);
           }
         },
       },
